@@ -8,14 +8,28 @@ MongoClient.connect(
     }
     console.log("Connected to MongoDB server");
 
-    db.collection("Todos").insertOne(
+    // db.collection("Todos").insertOne(
+    //   {
+    //     text: "Something to do",
+    //     completed: false
+    //   },
+    //   (err, result) => {
+    //     if (err) {
+    //       return console.log("Unable to insert todo", err);
+    //     }
+    //     console.log(JSON.stringify(result.ops, undefined, 2));
+    //   }
+    // );
+
+    db.collection("Users").insertOne(
       {
-        text: "Something to do",
-        completed: false
+        name: "Cody",
+        age: 33,
+        location: "Knoxville"
       },
       (err, result) => {
         if (err) {
-          return console.log("Unable to insert todo", err);
+          return console.log("Unable to insert user", err);
         }
         console.log(JSON.stringify(result.ops, undefined, 2));
       }
