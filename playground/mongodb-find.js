@@ -23,15 +23,17 @@ MongoClient.connect(
     //     }
     //   );
 
-    db.collection("Todos")
-      .find()
-      .count()
+    db.collection("Users")
+      .find({
+        name: "Cody"
+      })
+      .toArray()
       .then(
-        count => {
-          console.log(`Todos count: ${count}`);
+        docs => {
+          console.log(JSON.stringify(docs, undefined, 2));
         },
         err => {
-          console.log("Unable to fetch todos", err);
+          console.log("Unable to fetch users", err);
         }
       );
 
