@@ -28,3 +28,18 @@ newTodo.save().then(
     console.log("Unable to save todo", err);
   }
 );
+
+const newChallenge = new Todo({
+  text: "Push changes to GitHub",
+  completed: true,
+  completedAt: 1411
+});
+
+newChallenge.save().then(
+  doc => {
+    console.log("Save todo", doc);
+  },
+  err => {
+    console.log("Unable to save todo", err);
+  }
+);
