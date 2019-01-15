@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 // Create new collection document model/schema
 const Todo = mongoose.model("Todos", {
   text: {
@@ -15,3 +17,5 @@ const Todo = mongoose.model("Todos", {
     default: null
   }
 });
+
+module.exports = { Todo };

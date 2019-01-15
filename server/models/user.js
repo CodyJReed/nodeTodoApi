@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 // Create new collection document model/schema
 const User = mongoose.model("Users", {
   email: {
@@ -7,3 +8,5 @@ const User = mongoose.model("Users", {
     minlength: 1
   }
 });
+
+module.exports = { User };
