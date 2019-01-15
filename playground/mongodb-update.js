@@ -7,22 +7,48 @@ MongoClient.connect(
       return console.log("Unable to connect MongoDB server");
     }
     console.log("Connected to MongoDB server");
-    db.collection("Todos")
+
+    // db.collection("Todos")
+    //   .findOneAndUpdate(
+    //     {
+    //       _id: new ObjectID("5c3cbcb7782ca61e35f84aab")
+    //     },
+    //     {
+    //       $set: {
+    //         completed: true
+    //       }
+    //     },
+    //     {
+    //       returnOriginal: false
+    //     }
+    //   )
+    //   .then(result => {
+    //     console.log(result);
+    //   });
+
+    db.collection("Users")
       .findOneAndUpdate(
         {
-          _id: new ObjectID("5c3cbcb7782ca61e35f84aab")
+          name: "Indigo"
         },
         {
+          // Update key : value
           $set: {
-            completed: true
+            name: "Cody"
+          },
+          // Increment/Increase key : value
+          $inc: {
+            age: 1
           }
         },
         {
+          // Reeturn Updated document
           returnOriginal: false
         }
       )
-      .then(result => {
-        console.log(result);
+      // Then log result to console
+      .then(res => {
+        console.log(res);
       });
     // db.close();
   }
