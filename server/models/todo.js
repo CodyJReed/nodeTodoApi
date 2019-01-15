@@ -1,0 +1,17 @@
+// Create new collection document model/schema
+const Todo = mongoose.model("Todos", {
+  text: {
+    type: String,
+    required: true,
+    minlength: 1,
+    trim: true
+  },
+  completed: {
+    type: Boolean,
+    default: false
+  },
+  completedAt: {
+    type: Number,
+    default: null
+  }
+});
