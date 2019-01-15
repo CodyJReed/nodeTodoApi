@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/CodyJReed/nodeTodoApi#readme",
   "dependencies": {
-    "mongodb": "^2.2.5"
+    "mongodb": "^2.2.5",
+    "mongoose": "^5.4.4"
   }
 }
