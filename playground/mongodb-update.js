@@ -7,7 +7,23 @@ MongoClient.connect(
       return console.log("Unable to connect MongoDB server");
     }
     console.log("Connected to MongoDB server");
-
+    db.collection("Todos")
+      .findOneAndUpdate(
+        {
+          _id: new ObjectID("5c3cbcb7782ca61e35f84aab")
+        },
+        {
+          $set: {
+            completed: true
+          }
+        },
+        {
+          returnOriginal: false
+        }
+      )
+      .then(result => {
+        console.log(result);
+      });
     // db.close();
   }
 );
