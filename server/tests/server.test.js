@@ -123,10 +123,24 @@ describe("DELETE /todos/:id", () => {
 
         Todo.findById(hexId)
           .then(todo => {
-            expect(todo).toEqual(null);
+            expect(todo).toBeFalsy();
             done();
           })
           .catch(err => done(err));
       });
+  });
+
+  it("should return 404 if todo not found", done => {
+    request(app)
+      .delete(`/todos/${new ObjectID().toHexString()}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it("should return 404 if object id is invalid", done => {
+    request(app)
+      .delete(`/todos/1234`)
+      .expect(404)
+      .end(done);
   });
 });
