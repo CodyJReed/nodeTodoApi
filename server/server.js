@@ -8,13 +8,14 @@ const _ = require("lodash");
 
 // Mongoose
 const { mongoose } = require("./db/mongoose");
+require("./config/config");
 
 // Collection Model(s)/Schema(s)
 const { Todo } = require("./models/todo");
 const { User } = require("./models/user");
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 app.use(bodyParser.json());
 
