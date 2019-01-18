@@ -5,10 +5,11 @@ const { ObjectID } = require("mongodb");
 const _ = require("lodash");
 
 // Library Imports
+// Config env.MONGODB_URI
+require("./config/config");
 
 // Mongoose
 const { mongoose } = require("./db/mongoose");
-require("./config/config");
 
 // Collection Model(s)/Schema(s)
 const { Todo } = require("./models/todo");
