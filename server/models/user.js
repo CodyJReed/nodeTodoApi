@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
+const bcrypt = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema({
   email: {
@@ -34,6 +35,7 @@ const UserSchema = new mongoose.Schema({
   ]
 });
 
+// Method to return filtered user model instance
 UserSchema.methods.toJSON = function() {
   const user = this;
   const userObject = user.toObject();
@@ -41,6 +43,7 @@ UserSchema.methods.toJSON = function() {
   return _.pick(userObject, ["_id", "email"]);
 };
 
+// Instance method to generate a token using jsonwebtoken.sign()
 UserSchema.methods.generateAuthToken = function() {
   const user = this;
   const access = "auth";
@@ -58,6 +61,7 @@ UserSchema.methods.generateAuthToken = function() {
   });
 };
 
+// Model method to verify token and findOne using decoded _id
 UserSchema.statics.findByToken = function(token) {
   const User = this;
   let decoded;
@@ -74,6 +78,22 @@ UserSchema.statics.findByToken = function(token) {
     "tokens.access": "auth"
   }).then();
 };
+
+// Middleware to hash user password prior to saving to DB
+UserSchema.pre("save", function(next) {
+  const user = this;
+
+  if (user.isModified("password")) {
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(user.password, salt, (err, hash) => {
+        user.password = hash;
+        next();
+      });
+    });
+  } else {
+    next();
+  }
+});
 
 // Create new collection document model/schema
 const User = mongoose.model("Users", UserSchema);
