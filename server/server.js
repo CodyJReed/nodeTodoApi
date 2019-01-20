@@ -121,14 +121,19 @@ app.post("/users", (req, res) => {
   const body = _.pick(req.body, ["email", "password"]);
   const user = new User(body);
 
-  user.save().then(
-    doc => {
-      res.send(doc);
-    },
-    err => {
-      res.status(400).send(err);
-    }
-  );
+  user
+    .save()
+    .then(() => {
+      // Return token to chain callback
+      return user.generateAuthToken();
+    })
+    .then(token => {
+      // Create custom http header with token and send user
+      res.header("x-auth", token).send(user);
+    })
+    .catch(e => {
+      res.status(400).send(e);
+    });
 });
 
 app.listen(port, () => {

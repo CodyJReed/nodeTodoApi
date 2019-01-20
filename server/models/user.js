@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const jwt = require("jsonwebtoken");
+const _ = require("lodash");
 
-// Create new collection document model/schema
-const User = mongoose.model("Users", {
+const UserSchema = new mongoose.Schema({
   email: {
     required: true,
     trim: true,
@@ -32,5 +33,32 @@ const User = mongoose.model("Users", {
     }
   ]
 });
+
+UserSchema.methods.toJSON = function() {
+  const user = this;
+  const userObject = user.toObject();
+
+  return _.pick(userObject, ["_id", "email"]);
+};
+
+UserSchema.methods.generateAuthToken = function() {
+  const user = this;
+  const access = "auth";
+  const token = jwt
+    .sign({ _id: user._id.toHexString(), access }, "abc123")
+    .toString();
+
+  user.tokens.push({
+    access,
+    token
+  });
+
+  return user.save().then(() => {
+    return token;
+  });
+};
+
+// Create new collection document model/schema
+const User = mongoose.model("Users", UserSchema);
 
 module.exports = { User };
