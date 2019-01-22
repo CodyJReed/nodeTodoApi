@@ -219,11 +219,13 @@ describe("POST /users", () => {
         if (err) {
           return done(err);
         }
-        User.findOne({ email }).then(user => {
-          expect(user).toBeTruthy();
-          expect(user.password).not.toBe(password);
-          done();
-        });
+        User.findOne({ email })
+          .then(user => {
+            expect(user).toBeTruthy();
+            expect(user.password).not.toBe(password);
+            done();
+          })
+          .catch(err => done(err));
       });
   });
 
@@ -246,6 +248,43 @@ describe("POST /users", () => {
       .send({
         email: users[0].email,
         password: users[0].password
+      })
+      .expect(400)
+      .end(done);
+  });
+});
+
+describe("POST /users/login", done => {
+  it("should login user and return auth token", done => {
+    request(app)
+      .post("/users/login")
+      .send({
+        email: users[1].email,
+        password: users[1].password
+      })
+      .expect(200)
+      .expect(res => {
+        expect(res.headers).toHaveProperty("x-auth");
+      })
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+        User.findById(users[1]._id)
+          .then(user => {
+            expect(user.tokens[0].access).toEqual("auth");
+            expect(user.tokens[0].token).toEqual(res.headers["x-auth"]);
+            done();
+          })
+          .catch(e => done(e));
+      });
+  });
+  it("should reject invalid login", done => {
+    request(app)
+      .post("/users/login")
+      .send({
+        email: "test@example.com",
+        password: "123abc"
       })
       .expect(400)
       .end(done);
