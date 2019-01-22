@@ -4,25 +4,11 @@ const { ObjectID } = require("mongodb");
 
 const { app } = require("./../server");
 const { Todo } = require("./../models/todo");
+const { todos, populateTodos, users, populateUsers } = require("./seed/seed");
 
-const todos = [
-  { text: "firts todos", _id: new ObjectID() },
-  {
-    text: "second todos",
-    _id: new ObjectID(),
-    completed: true,
-    completedAt: 1234
-  }
-];
-
-// Before each test wipe Todo(s)
-beforeEach(done => {
-  Todo.deleteMany({})
-    .then(() => {
-      return Todo.insertMany(todos);
-    })
-    .then(() => done());
-});
+// Before each test wipe Todo(s) and User(s)
+beforeEach(populateUsers);
+beforeEach(populateTodos);
 
 // Testing POST "/todos" route
 describe("POST /todos", () => {

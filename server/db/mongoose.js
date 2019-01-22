@@ -6,6 +6,8 @@ mongoose.connect(
   { useNewUrlParser: true }
 );
 
+mongoose.set("useCreateIndex", true);
+
 module.exports = {
   mongoose
 };
