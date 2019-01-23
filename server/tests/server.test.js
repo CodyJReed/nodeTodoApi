@@ -283,10 +283,23 @@ describe("POST /users/login", done => {
     request(app)
       .post("/users/login")
       .send({
-        email: "test@example.com",
+        email: users[1].email,
         password: "123abc"
       })
       .expect(400)
-      .end(done);
+      .expect(res => {
+        expect(res.headers).not.toHaveProperty("x-auth");
+      })
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+        User.findById(users[1]._id)
+          .then(user => {
+            expect(user.tokens.length).toBe(0);
+            done();
+          })
+          .catch(e => done(e));
+      });
   });
 });
