@@ -61,6 +61,18 @@ UserSchema.methods.generateAuthToken = function() {
   });
 };
 
+UserSchema.methods.removeToken = function(token) {
+  const user = this;
+
+  return user.update({
+    $pull: {
+      tokens: {
+        token
+      }
+    }
+  });
+};
+
 // Model method to verify token and findOne using decoded _id
 UserSchema.statics.findByToken = function(token) {
   const User = this;
