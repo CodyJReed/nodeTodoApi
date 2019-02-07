@@ -157,30 +157,25 @@ app.get("/users/me", authenticate, (req, res) => {
 });
 
 // User Sign-in
-app.post("/users/login", (req, res) => {
-  const body = _.pick(req.body, ["email", "password"]);
-  User.findByCredentials(body.email, body.password)
-    .then(user => {
-      return user.generateAuthToken().then(token => {
-        // Create custom http header with token and send user
-        res.header("x-auth", token).send(user);
-      });
-    })
-    .catch(e => {
-      res.status(400).send();
-    });
+app.post("/users/login", async (req, res) => {
+  try {
+    const body = _.pick(req.body, ["email", "password"]);
+    const user = await User.findByCredentials(body.email, body.password);
+    const token = await user.generateAuthToken();
+    return res.header("x-auth", token).send(user);
+  } catch (e) {
+    res.status(400).send();
+  }
 });
 
 // User logout
-app.delete("/users/me/token", authenticate, (req, res) => {
-  req.user.removeToken(req.token).then(
-    () => {
-      res.status(200).send();
-    },
-    () => {
-      res.status(400).send();
-    }
-  );
+app.delete("/users/me/token", authenticate, async (req, res) => {
+  try {
+    await req.user.removeToken(req.token);
+    res.status(200).send();
+  } catch (e) {
+    res.status(400).send();
+  }
 });
 
 app.listen(port, () => {
