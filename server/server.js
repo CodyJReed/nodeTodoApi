@@ -75,26 +75,26 @@ app.get("/todos/:id", authenticate, (req, res) => {
 });
 
 // Delete Todo(s)
-app.delete("/todos/:id", authenticate, (req, res) => {
-  const id = req.params.id;
+app.delete("/todos/:id", authenticate, async (req, res) => {
+  try {
+    const id = req.params.id;
 
-  if (!ObjectID.isValid(id)) {
-    return res.status(404).send();
-  }
+    if (!ObjectID.isValid(id)) {
+      return res.status(404).send();
+    }
 
-  Todo.findOneAndDelete({
-    _id: id,
-    _creator: req.user._id
-  })
-    .then(todo => {
-      if (!todo) {
-        return res.status(404).send();
-      }
-      res.send({ todo });
-    })
-    .catch(err => {
-      return res.status(400).send();
+    const todo = await Todo.findOneAndDelete({
+      _id: id,
+      _creator: req.user._id
     });
+
+    if (!todo) {
+      return res.status(404).send();
+    }
+    res.send({ todo });
+  } catch (e) {
+    return res.status(400).send();
+  }
 });
 
 // Update Todo(s)
@@ -133,23 +133,16 @@ app.patch("/todos/:id", authenticate, (req, res) => {
 });
 
 // User Sign Up
-app.post("/users", (req, res) => {
-  const body = _.pick(req.body, ["email", "password"]);
-  const user = new User(body);
-
-  user
-    .save()
-    .then(() => {
-      // Return token to chain callback
-      return user.generateAuthToken();
-    })
-    .then(token => {
-      // Create custom http header with token and send user
-      res.header("x-auth", token).send(user);
-    })
-    .catch(e => {
-      res.status(400).send(e);
-    });
+app.post("/users", async (req, res) => {
+  try {
+    const body = _.pick(req.body, ["email", "password"]);
+    const user = new User(body);
+    await user.save();
+    const token = await user.generateAuthToken();
+    return res.header("x-auth", token).send(user);
+  } catch (e) {
+    res.status(400).send(e);
+  }
 });
 
 app.get("/users/me", authenticate, (req, res) => {
